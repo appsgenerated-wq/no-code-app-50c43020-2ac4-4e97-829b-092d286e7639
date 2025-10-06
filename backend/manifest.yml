@@ -1,0 +1,64 @@
+name: KindnessHub
+
+entities:
+  User:
+    authenticable: true
+    properties:
+      - name
+      - name: email
+        type: email
+      - name: bio
+        type: text
+    policies:
+      create:
+        - access: admin
+      read:
+        - access: restricted
+          allow: User
+          condition: self
+      update:
+        - access: restricted
+          allow: User
+          condition: self
+      delete:
+        - access: admin
+      signup:
+        - access: public
+
+  KindnessPost:
+    properties:
+      - name: title
+        type: string
+      - name: content
+        type: richText
+      - name: category
+        type: choice
+        options:
+          values: ['Act of Kindness', 'Gratitude', 'Positive News']
+        default: 'Act of Kindness'
+    belongsTo:
+      - name: author
+        entity: User
+    policies:
+      create:
+        - access: restricted
+          allow: User
+      read:
+        - access: public
+      update:
+        - access: restricted
+          allow: User
+          condition: self
+      delete:
+        - access: restricted
+          allow: User
+          condition: self
+
+
+# Health check endpoint for connection testing
+endpoints:
+  health:
+    path: /api/health
+    method: GET
+    policies: []
+    handler: healthCheck
